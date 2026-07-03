@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kleanly Quote Calculator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f9f9f7; color: #1a1a1a; padding: 2rem 1rem; }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 20px; font-weight: 500; margin-bottom: 1.5rem; color: #1a1a1a; }
+
+    .tabs { display: flex; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; }
+    .tab-btn { flex: 1; background: #fff; border: none; padding: 10px 8px; font-size: 13px; font-weight: 500; color: #666; cursor: pointer; border-right: 1px solid #ddd; }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn:hover { background: #E1F5EE; color: #1a1a1a; }
+    .tab-btn.active { background: #E1F5EE; color: #1a1a1a; border-bottom: 2px solid #1D9E75; }
+
+    .section-label { font-size: 11px; font-weight: 600; color: #888; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+
+    .property-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 1.5rem; }
+    .prop-btn { background: #fff; border: 2px solid #e0e0da; border-radius: 8px; padding: 10px 8px; cursor: pointer; text-align: left; transition: border-color 0.1s, background 0.1s; }
+    .prop-btn:hover { border-color: #1D9E75; background: #E1F5EE; }
+    .prop-btn.sel { border: 2px solid #1D9E75; background: #E1F5EE; }
+    .prop-btn .prop-from { font-size: 11px; color: #888; }
+    .prop-btn .prop-price { font-size: 18px; font-weight: 500; color: #1a1a1a; margin-top: 4px; }
+    .prop-btn .prop-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+
+    .extras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .extra-item { background: #fff; border: 2px solid #e0e0da; border-radius: 8px; padding: 10px 12px; transition: border-color 0.1s, background 0.1s; }
+    .extra-item.sel { border-color: #1D9E75; background: #E1F5EE; }
+    .extra-item .extra-name { font-size: 13px; font-weight: 500; color: #1a1a1a; margin-bottom: 6px; }
+    .extra-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .extra-controls button { background: #f1efe8; border: 0.5px solid #ccc; border-radius: 6px; font-size: 12px; padding: 5px 12px; cursor: pointer; color: #1a1a1a; font-weight: 500; }
+    .extra-controls button:hover { background: #E1F5EE; border-color: #1D9E75; }
+    .extra-controls button.active { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+    .extra-item.sel .extra-controls button:not(.active), .extra-item.sel .qty-btn { background: #fff; }
+
+    .qty-control { display: flex; align-items: center; gap: 6px; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 50%; background: #f1efe8; border: 0.5px solid #ccc; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: #1a1a1a; }
+    .qty-btn:hover { background: #E1F5EE; border-color: #1D9E75; }
+    .qty-val { font-size: 14px; font-weight: 500; min-width: 20px; text-align: center; color: #1a1a1a; }
+    .qty-val.nonzero { color: #0F6E56; font-size: 16px; }
+
+    .type-btns { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .type-btn { background: #fff; border: 2px solid #e0e0da; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 500; cursor: pointer; color: #1a1a1a; }
+    .type-btn:hover { background: #E1F5EE; border-color: #1D9E75; }
+    .type-btn.sel { border-color: #1D9E75; background: #E1F5EE; }
+
+    .freq-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .freq-btn { background: #fff; border: 2px solid #e0e0da; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; color: #1a1a1a; font-weight: 500; }
+    .freq-btn:hover { background: #E1F5EE; border-color: #1D9E75; }
+    .freq-btn.sel { border-color: #1D9E75; background: #E1F5EE; }
+
+    .addon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+
+    .other-card { background: #fff; border: 2px solid #e0e0da; border-radius: 8px; padding: 10px 12px; margin-bottom: 1.5rem; }
+    .other-card .extra-name { font-size: 13px; font-weight: 500; color: #1a1a1a; margin-bottom: 8px; }
+    .col-headers { display: grid; grid-template-columns: 1fr 100px 28px; gap: 6px; margin-bottom: 4px; }
+    .col-headers span { font-size: 11px; color: #aaa; }
+    .col-headers span:nth-child(2) { text-align: right; }
+    .other-entry-row { display: grid; grid-template-columns: 1fr 100px 28px; gap: 6px; align-items: center; margin-bottom: 6px; }
+    .other-entry-row input { font-size: 13px; padding: 6px 8px; border: 0.5px solid #ccc; border-radius: 6px; width: 100%; }
+    .remove-btn { background: none; border: none; cursor: pointer; color: #aaa; font-size: 15px; }
+    .remove-btn:hover { color: #1a1a1a; }
+    .add-row-btn { background: none; border: none; cursor: pointer; font-size: 13px; color: #1D9E75; padding: 2px 0; }
+
+    .summary-card { background: #f1efe8; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+    .summary-line { display: flex; justify-content: space-between; font-size: 14px; color: #666; padding: 3px 0; }
+    .summary-line.total { font-size: 22px; font-weight: 500; color: #1a1a1a; border-top: 0.5px solid #ccc; margin-top: 8px; padding-top: 10px; }
+    .summary-line.total span:last-child { color: #1D9E75; }
+    .summary-line.min-charge { color: #BA7517; font-style: italic; }
+    .empty-state { font-size: 14px; color: #aaa; text-align: center; padding: 1rem 0; }
+
+    .field-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .field-group { display: flex; flex-direction: column; gap: 4px; }
+    .field-group label { font-size: 12px; color: #666; }
+    .field-group input[type="number"] { font-size: 14px; width: 110px; padding: 6px 8px; border: 0.5px solid #ccc; border-radius: 6px; }
+    .field-group select { font-size: 13px; padding: 6px 10px; border: 0.5px solid #ccc; border-radius: 6px; background: #fff; color: #1a1a1a; cursor: pointer; }
+    .derived-field { display: flex; flex-direction: column; gap: 4px; }
+    .derived-field label { font-size: 12px; color: #666; }
+    .derived-value { font-size: 14px; font-weight: 500; color: #1a1a1a; background: #f1efe8; border: 0.5px solid #ddd; border-radius: 6px; padding: 7px 10px; width: 110px; height: 36px; display: flex; align-items: center; gap: 4px; }
+    .derived-value .formula-hint { font-size: 11px; color: #aaa; font-weight: 400; }
+
+    .placeholder-box { background: #f1efe8; border-radius: 10px; padding: 2rem; text-align: center; color: #aaa; font-size: 14px; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Quote calculator</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('eot')">End of tenancy</button>
+    <button class="tab-btn" onclick="switchTab('commercial')">Commercial</button>
+    <button class="tab-btn" onclick="switchTab('postbuild')">Post build</button>
+  </div>
+  <div id="tab-eot"></div>
+  <div id="tab-commercial" style="display:none;"></div>
+  <div id="tab-postbuild" style="display:none;"></div>
+</div>
+
+<script>
+function switchTab(tab){
+  ["eot","commercial","postbuild"].forEach((t,i)=>{
+    document.getElementById("tab-"+t).style.display=t===tab?"":"none";
+    document.querySelectorAll(".tab-btn")[i].classList.toggle("active",t===tab);
+  });
+}
+
+/* ══ EOT ══ */
+const PROPS=[{label:"Studio / 1 bed · 1 bath",price:359},{label:"2 bed · 1 bath",price:429},{label:"2 bed · 2 bath",price:459},{label:"3 bed · 1 bath",price:529},{label:"3 bed · 2 bath",price:559},{label:"3 bed · 3 bath",price:589},{label:"4 bed · 1 bath",price:619},{label:"4 bed · 2 bath",price:649},{label:"4 bed · 3 bath",price:679},{label:"5+ bedrooms",price:null}];
+const EOT_EXTRAS=[{id:"carpet",name:"Carpet cleaning",type:"qty",price:69,label:"$69 / area"},{id:"windows",name:"Exterior windows",type:"toggle",price:119,label:"$119"},{id:"balcony",name:"Balcony",type:"size",prices:{small:34,large:64},labels:{small:"Small $34",large:"Large $64"}},{id:"garage",name:"Garage",type:"qty",price:34,label:"$34 / car spot"},{id:"wall",name:"Wall washing",type:"toggle",price:89,label:"$89"},{id:"blinds",name:"Blinds",type:"qty",price:33,label:"$33 / set"},{id:"deck",name:"Deck / patio",type:"size",prices:{small:34,large:64},labels:{small:"Small $34",large:"Large $64"}},{id:"doors",name:"Sliding glass doors",type:"qty",price:34,label:"$34 / extra set"}];
+let eotProp=null,eotExtras={},eotOther=[],eotOtherId=0;
+EOT_EXTRAS.forEach(e=>{eotExtras[e.id]=e.type==="toggle"?false:e.type==="qty"?0:null;});
+
+function buildEOT(){
+  const el=document.getElementById("tab-eot");
+  el.innerHTML=`<div class="section-label">Property size</div><div class="property-grid" id="eotPropGrid"></div><div class="section-label">Add-ons</div><div class="extras-grid" id="eotExtrasGrid"></div><div class="other-card"><div class="extra-name">Other</div><div class="col-headers"><span>Description</span><span>Price</span><span></span></div><div id="eotOtherList"></div><button class="add-row-btn" onclick="eotAddOther()">+ Add item</button></div><div class="section-label">Quote summary</div><div class="summary-card" id="eotSummary"><p class="empty-state">Select a property size to get started</p></div>`;
+  PROPS.forEach(p=>{
+    const btn=document.createElement("button");btn.className="prop-btn";
+    if(p.price!==null){btn.innerHTML=`<div class="prop-from">from</div><div class="prop-price">$${p.price}</div><div class="prop-name">${p.label}</div>`;btn.onclick=()=>{eotProp=p;document.querySelectorAll("#eotPropGrid .prop-btn").forEach(b=>b.classList.remove("sel"));btn.classList.add("sel");eotRender();};}
+    else{btn.innerHTML=`<div class="prop-name">${p.label}</div><div style="font-size:13px;color:#1D9E75;margin-top:6px;font-weight:500;">Call for quote</div>`;btn.onclick=()=>alert("Please call for a 5+ bedroom quote.");}
+    document.getElementById("eotPropGrid").appendChild(btn);
+  });
+  EOT_EXTRAS.forEach(e=>{const d=document.createElement("div");d.className="extra-item";d.id="eot-extra-"+e.id;document.getElementById("eotExtrasGrid").appendChild(d);});
+  eotRenderExtras();
+}
+function eotRenderExtras(){
+  EOT_EXTRAS.forEach(e=>{
+    const d=document.getElementById("eot-extra-"+e.id);if(!d)return;
+    if(e.type==="toggle")d.innerHTML=`<div class="extra-name">${e.name}</div><div class="extra-controls"><button class="${eotExtras[e.id]?'active':''}" onclick="eotToggle('${e.id}')">${e.label}</button></div>`;
+    else if(e.type==="qty"){const q=eotExtras[e.id];d.innerHTML=`<div class="extra-name">${e.name}</div><div class="extra-controls"><div class="qty-control"><button class="qty-btn" onclick="eotQty('${e.id}',-1)">−</button><span class="qty-val${q>0?' nonzero':''}">${q}</span><button class="qty-btn" onclick="eotQty('${e.id}',1)">+</button></div><span style="font-size:12px;color:#888;">${e.label}</span></div>`;}
+    else d.innerHTML=`<div class="extra-name">${e.name}</div><div class="extra-controls"><button class="${eotExtras[e.id]==='small'?'active':''}" onclick="eotSize('${e.id}','small')">${e.labels.small}</button><button class="${eotExtras[e.id]==='large'?'active':''}" onclick="eotSize('${e.id}','large')">${e.labels.large}</button>${eotExtras[e.id]?`<button onclick="eotSize('${e.id}',null)" style="font-size:11px;padding:3px 7px;">✕</button>`:''}</div>`;
+    const active=(e.type==="toggle"&&eotExtras[e.id])||(e.type==="qty"&&eotExtras[e.id]>0)||(e.type==="size"&&eotExtras[e.id]);
+    d.classList.toggle("sel",!!active);
+  });
+}
+function eotToggle(id){eotExtras[id]=!eotExtras[id];eotRenderExtras();eotRender();}
+function eotQty(id,d){eotExtras[id]=Math.max(0,eotExtras[id]+d);eotRenderExtras();eotRender();}
+function eotSize(id,v){eotExtras[id]=v;eotRenderExtras();eotRender();}
+function eotAddOther(){const id=++eotOtherId;eotOther.push({id,desc:"",cost:""});eotRenderOther();setTimeout(()=>{const el=document.getElementById("eot-desc-"+id);if(el)el.focus();},0);}
+function eotRemoveOther(id){eotOther=eotOther.filter(r=>r.id!==id);eotRenderOther();eotRender();}
+function eotUpdateOther(id,f,v){const r=eotOther.find(r=>r.id===id);if(r){r[f]=v;eotRender();}}
+function eotRenderOther(){const c=document.getElementById("eotOtherList");if(!c)return;c.innerHTML=eotOther.map(r=>`<div class="other-entry-row"><input type="text" id="eot-desc-${r.id}" placeholder="e.g. Fridge cleaning" value="${r.desc.replace(/"/g,'&quot;')}" oninput="eotUpdateOther(${r.id},'desc',this.value)" onkeydown="if(event.key==='Tab'||event.key==='Enter'){event.preventDefault();document.getElementById('eot-cost-${r.id}').focus();}"/><input type="number" id="eot-cost-${r.id}" placeholder="$0" min="0" step="1" value="${r.cost}" oninput="eotUpdateOther(${r.id},'cost',this.value)" onkeydown="if(event.key==='Enter')eotAddOther();"/><button class="remove-btn" onclick="eotRemoveOther(${r.id})">✕</button></div>`).join("");}
+function eotRender(){
+  const s=document.getElementById("eotSummary");if(!s)return;
+  if(!eotProp){s.innerHTML='<p class="empty-state">Select a property size to get started</p>';return;}
+  const lines=[];
+  EOT_EXTRAS.forEach(e=>{if(e.type==="toggle"&&eotExtras[e.id])lines.push({label:e.name,amount:e.price});else if(e.type==="qty"&&eotExtras[e.id]>0)lines.push({label:`${e.name} × ${eotExtras[e.id]}`,amount:e.price*eotExtras[e.id]});else if(e.type==="size"&&eotExtras[e.id])lines.push({label:`${e.name} (${eotExtras[e.id]})`,amount:e.prices[eotExtras[e.id]]});});
+  eotOther.forEach(r=>{const c=parseFloat(r.cost);if(r.desc.trim()&&!isNaN(c)&&c>0)lines.push({label:r.desc.trim(),amount:Math.round(c)});});
+  const total=eotProp.price+lines.reduce((s,l)=>s+l.amount,0);
+  s.innerHTML=`<div class="summary-line"><span>${eotProp.label}</span><span>$${eotProp.price}</span></div>`+lines.map(l=>`<div class="summary-line"><span>${l.label}</span><span>$${l.amount}</span></div>`).join("")+`<div class="summary-line total"><span>Total (inc. GST)</span><span>$${total}</span></div>`;
+}
+
+/* ══ COMMERCIAL ══ */
+const COMM_TYPES=[{id:"OFFICE",label:"Office",rate:200},{id:"YOGA",label:"Yoga studio",rate:115},{id:"STRATA",label:"Strata",rate:160}];
+const FREQUENCIES=[{label:"5× / week",mult:1.0},{label:"3× / week",mult:1.05},{label:"1× / week",mult:1.15},{label:"Fortnightly",mult:1.35}];
+const DENSITY_OPTIONS=[{label:"Light (Open Space)",value:1.0},{label:"Medium (Standard Layout)",value:0.85},{label:"Heavy (High Density / Complex)",value:0.70}];
+const COMM_ADDONS=[{id:"toilets",name:"Toilets",note:"$50 each"},{id:"kitchens",name:"Kitchens",note:"$50 each"},{id:"stairs",name:"Flights of stairs",note:"15 min each"},{id:"lifts",name:"Lifts",note:"10 min each"},{id:"bins",name:"Bin rotations",note:"10 min each"},{id:"mirrors",name:"Mirror panels",note:"5 min each"}];
+const MIN_HOURS=2,MATERIAL_MULTIPLIER=0.20;
+let commType=null,commFreq=FREQUENCIES[0],commDensity=1.0;
+let commAddons={toilets:0,kitchens:0,stairs:0,lifts:0,bins:0,mirrors:0};
+let commLaborRate=45,commMargin=40,commOther=[],commOtherId=0;
+
+function buildCommercial(){
+  const el=document.getElementById("tab-commercial");
+  el.innerHTML=`<div class="section-label">Property type</div><div class="type-btns" id="commTypeBtns"></div><div class="field-row"><div class="field-group"><label>Area (sqm)</label><input type="number" id="commSqm" placeholder="e.g. 250" min="0" step="1" oninput="commRender()"/></div><div class="field-group"><label>Density</label><select id="commDensity" onchange="commDensity=parseFloat(this.value);commRender();">${DENSITY_OPTIONS.map((d,i)=>`<option value="${d.value}"${i===0?" selected":""}>${d.label}</option>`).join("")}</select></div><div class="field-group"><label>Labor rate ($/hr)</label><input type="number" id="commLabor" value="45" min="1" step="1" oninput="commLaborRate=parseFloat(this.value)||45;commUpdateMaterial();commRender()"/></div><div class="derived-field"><label>Material rate ($/hr)</label><div class="derived-value"><span id="commMaterialVal">$9.00</span><span class="formula-hint">= labor × 0.20</span></div></div><div class="field-group"><label>Target margin (%)</label><input type="number" id="commMargin" value="40" min="0" max="99" step="1" oninput="commMargin=parseFloat(this.value)||40;commRender()"/></div></div><div class="section-label">Add-ons</div><div class="addon-grid" id="commAddonGrid"></div><div class="section-label">Cleaning frequency</div><div class="freq-btns" id="commFreqBtns"></div><div class="other-card"><div class="extra-name">Other</div><div class="col-headers"><span>Description</span><span>Price</span><span></span></div><div id="commOtherList"></div><button class="add-row-btn" onclick="commAddOther()">+ Add item</button></div><div class="section-label">Quote summary</div><div class="summary-card" id="commSummary"><p class="empty-state">Select a property type and enter area to get started</p></div>`;
+  const ag=document.getElementById("commAddonGrid");
+  COMM_ADDONS.forEach(a=>{const d=document.createElement("div");d.className="extra-item";d.id="comm-addon-"+a.id;d.innerHTML=`<div class="extra-name">${a.name}<span style="font-size:11px;color:#aaa;font-weight:400;margin-left:6px;">${a.note}</span></div><div class="extra-controls"><div class="qty-control"><button class="qty-btn" onclick="commAdj('${a.id}',-1)">−</button><span class="qty-val" id="comm-qty-${a.id}">0</span><button class="qty-btn" onclick="commAdj('${a.id}',1)">+</button></div></div>`;ag.appendChild(d);});
+  COMM_TYPES.forEach(t=>{const btn=document.createElement("button");btn.className="type-btn";btn.textContent=t.label;btn.onclick=()=>{commType=t;document.querySelectorAll("#commTypeBtns .type-btn").forEach(b=>b.classList.remove("sel"));btn.classList.add("sel");commRender();};document.getElementById("commTypeBtns").appendChild(btn);});
+  FREQUENCIES.forEach((f,i)=>{const btn=document.createElement("button");btn.className="freq-btn"+(i===0?" sel":"");btn.textContent=f.label;btn.onclick=()=>{commFreq=f;document.querySelectorAll("#commFreqBtns .freq-btn").forEach(b=>b.classList.remove("sel"));btn.classList.add("sel");commRender();};document.getElementById("commFreqBtns").appendChild(btn);});
+}
+function commUpdateMaterial(){const el=document.getElementById("commMaterialVal");if(el)el.textContent="$"+(commLaborRate*MATERIAL_MULTIPLIER).toFixed(2);}
+function commAdj(id,d){commAddons[id]=Math.max(0,commAddons[id]+d);const v=document.getElementById("comm-qty-"+id);if(v){v.textContent=commAddons[id];v.className="qty-val"+(commAddons[id]>0?" nonzero":"");}const c=document.getElementById("comm-addon-"+id);if(c)c.classList.toggle("sel",commAddons[id]>0);commRender();}
+function commAddOther(){const id=++commOtherId;commOther.push({id,desc:"",cost:""});commRenderOther();setTimeout(()=>{const el=document.getElementById("comm-desc-"+id);if(el)el.focus();},0);}
+function commRemoveOther(id){commOther=commOther.filter(r=>r.id!==id);commRenderOther();commRender();}
+function commUpdateOther(id,f,v){const r=commOther.find(r=>r.id===id);if(r){r[f]=v;commRender();}}
+function commRenderOther(){const c=document.getElementById("commOtherList");if(!c)return;c.innerHTML=commOther.map(r=>`<div class="other-entry-row"><input type="text" id="comm-desc-${r.id}" placeholder="Description" value="${r.desc.replace(/"/g,'&quot;')}" oninput="commUpdateOther(${r.id},'desc',this.value)" onkeydown="if(event.key==='Tab'||event.key==='Enter'){event.preventDefault();document.getElementById('comm-cost-${r.id}').focus();}"/><input type="number" id="comm-cost-${r.id}" placeholder="$0" min="0" step="1" value="${r.cost}" oninput="commUpdateOther(${r.id},'cost',this.value)" onkeydown="if(event.key==='Enter')commAddOther();"/><button class="remove-btn" onclick="commRemoveOther(${r.id})">✕</button></div>`).join("");}
+function commRender(){
+  const s=document.getElementById("commSummary");if(!s)return;
+  const sqm=parseFloat(document.getElementById("commSqm")?.value||"");
+  if(!commType||!sqm||sqm<=0){s.innerHTML='<p class="empty-state">Select a property type and enter area to get started</p>';return;}
+  const materialRate=commLaborRate*MATERIAL_MULTIPLIER;
+  const adjustedRate=commType.rate*commDensity;
+  const addonMins=commAddons.stairs*15+commAddons.lifts*10+commAddons.bins*10+commAddons.mirrors*5;
+  const rawHrs=(sqm/adjustedRate)+(addonMins/60);
+  const minApplied=rawHrs<MIN_HOURS;
+  const billableHrs=Math.max(rawHrs,MIN_HOURS);
+  const laborCost=billableHrs*commLaborRate;
+  const materialCost=billableHrs*materialRate;
+  const totalCostBeforeMargin=laborCost+materialCost;
+  const basePrice=totalCostBeforeMargin/(1-commMargin/100);
+  const adjustedPrice=basePrice*commFreq.mult;
+  const fixedAddons=(commAddons.toilets*50)+(commAddons.kitchens*50);
+  const otherLines=[];
+  commOther.forEach(r=>{const c=parseFloat(r.cost);if(r.desc.trim()&&!isNaN(c)&&c>0)otherLines.push({label:r.desc.trim(),amount:Math.round(c)});});
+  const total=adjustedPrice+fixedAddons+otherLines.reduce((s,l)=>s+l.amount,0);
+  const densityLabel=DENSITY_OPTIONS.find(d=>d.value===commDensity)?.label||"";
+  let html=`<div class="summary-line"><span>${commType.label} — ${sqm} sqm</span><span>${rawHrs.toFixed(2)} hrs calculated</span></div>`;
+  if(commDensity!==1.0)html+=`<div class="summary-line"><span>Density modifier (${densityLabel})</span><span>×${commDensity.toFixed(2)}</span></div>`;
+  if(minApplied)html+=`<div class="summary-line min-charge"><span>2-hour minimum applied</span><span>${billableHrs.toFixed(2)} hrs billed</span></div>`;
+  html+=`<div class="summary-line"><span>Labor cost (${billableHrs.toFixed(2)} hrs × $${commLaborRate})</span><span>$${laborCost.toFixed(2)}</span></div>`;
+  html+=`<div class="summary-line"><span>Material cost (${billableHrs.toFixed(2)} hrs × $${materialRate.toFixed(2)})</span><span>$${materialCost.toFixed(2)}</span></div>`;
+  html+=`<div class="summary-line"><span>Margin (${commMargin}%)</span><span>$${(basePrice-totalCostBeforeMargin).toFixed(2)}</span></div>`;
+  if(commFreq.mult!==1.0)html+=`<div class="summary-line"><span>Frequency adjustment (${commFreq.label})</span><span>×${commFreq.mult.toFixed(2)}</span></div>`;
+  [{id:"stairs",n:"Flights of stairs"},{id:"lifts",n:"Lifts"},{id:"bins",n:"Bin rotations"},{id:"mirrors",n:"Mirror panels"}].forEach(a=>{if(commAddons[a.id])html+=`<div class="summary-line"><span>${a.n} × ${commAddons[a.id]}</span><span style="font-size:12px;color:#aaa;">+time</span></div>`;});
+  if(commAddons.toilets)html+=`<div class="summary-line"><span>Toilets × ${commAddons.toilets}</span><span>$${commAddons.toilets*50}</span></div>`;
+  if(commAddons.kitchens)html+=`<div class="summary-line"><span>Kitchens × ${commAddons.kitchens}</span><span>$${commAddons.kitchens*50}</span></div>`;
+  otherLines.forEach(l=>{html+=`<div class="summary-line"><span>${l.label}</span><span>$${l.amount}</span></div>`;});
+  html+=`<div class="summary-line total"><span>Price per clean</span><span>$${total.toFixed(2)}</span></div>`;
+  s.innerHTML=html;
+}
+
+/* ══ POST BUILD ══ */
+function buildPostBuild(){document.getElementById("tab-postbuild").innerHTML=`<div class="placeholder-box"><i class="ti ti-tools" style="font-size:32px;margin-bottom:12px;display:block;"></i>Post build pricing coming soon</div>`;}
+
+buildEOT();buildCommercial();buildPostBuild();
+</script>
+</body>
+</html>
