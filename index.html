@@ -109,8 +109,8 @@ function switchTab(tab){
 }
 
 /* ══ EOT ══ */
-const PROPS=[{label:"Studio / 1 bed · 1 bath",price:359},{label:"2 bed · 1 bath",price:429},{label:"2 bed · 2 bath",price:459},{label:"3 bed · 1 bath",price:529},{label:"3 bed · 2 bath",price:559},{label:"3 bed · 3 bath",price:589},{label:"4 bed · 1 bath",price:619},{label:"4 bed · 2 bath",price:649},{label:"4 bed · 3 bath",price:679},{label:"5+ bedrooms",price:null}];
-const EOT_EXTRAS=[{id:"carpet",name:"Carpet cleaning",type:"qty",price:69,label:"$69 / area"},{id:"windows",name:"Exterior windows",type:"toggle",price:119,label:"$119"},{id:"balcony",name:"Balcony",type:"size",prices:{small:34,large:64},labels:{small:"Small $34",large:"Large $64"}},{id:"garage",name:"Garage",type:"qty",price:34,label:"$34 / car spot"},{id:"wall",name:"Wall washing",type:"toggle",price:89,label:"$89"},{id:"blinds",name:"Blinds",type:"qty",price:33,label:"$33 / set"},{id:"deck",name:"Deck / patio",type:"size",prices:{small:34,large:64},labels:{small:"Small $34",large:"Large $64"}},{id:"doors",name:"Sliding glass doors",type:"qty",price:34,label:"$34 / extra set"}];
+const PROPS=[{label:"Studio / 1 bed · 1 bath",price:380},{label:"2 bed · 1 bath",price:470},{label:"2 bed · 2 bath",price:580},{label:"3 bed · 1 bath",price:560},{label:"3 bed · 2 bath",price:670},{label:"3 bed · 3 bath",price:780},{label:"4 bed · 1 bath",price:670},{label:"4 bed · 2 bath",price:790},{label:"4 bed · 3 bath",price:910},{label:"5 bed · 3 bath",price:1030},{label:"5 bed · 4 bath",price:1150},{label:"6+ bedrooms",price:null}];
+const EOT_EXTRAS=[{id:"carpet",name:"Carpet cleaning",type:"qty",price:69,label:"$69 / area"},{id:"carpetHallway",name:"Carpet cleaning — Hallways & Stairs",type:"toggle",price:45,label:"$45"},{id:"windows",name:"Exterior windows",type:"qty",price:15,label:"$15 / set"},{id:"balcony",name:"Balcony",type:"size",prices:{small:45,large:85},labels:{small:"Small $45",large:"Large $85"}},{id:"garage",name:"Garage",type:"qty",price:34,label:"$34 / car spot"},{id:"spotwall",name:"Spot wall washing",type:"toggle",price:89,label:"$89"},{id:"fullwall",name:"Full wall washing",type:"qty",price:50,label:"$50 / room"},{id:"blinds",name:"Blinds",type:"qty",price:33,label:"$33 / set"},{id:"pressure",name:"Outdoor pressure wash",type:"toggle",price:160,label:"$160"},{id:"deck",name:"Deck / patio",type:"size",prices:{small:45,large:85},labels:{small:"Small $45",large:"Large $85"}},{id:"doors",name:"Sliding glass doors",type:"qty",price:34,label:"$34 / extra set"}];
 let eotProp=null,eotExtras={},eotOther=[],eotOtherId=0;
 EOT_EXTRAS.forEach(e=>{eotExtras[e.id]=e.type==="toggle"?false:e.type==="qty"?0:null;});
 
@@ -211,7 +211,7 @@ function commRender(){
   if(commAddons.toilets)html+=`<div class="summary-line"><span>Toilets × ${commAddons.toilets}</span><span>$${commAddons.toilets*50}</span></div>`;
   if(commAddons.kitchens)html+=`<div class="summary-line"><span>Kitchens × ${commAddons.kitchens}</span><span>$${commAddons.kitchens*50}</span></div>`;
   otherLines.forEach(l=>{html+=`<div class="summary-line"><span>${l.label}</span><span>$${l.amount}</span></div>`;});
-  html+=`<div class="summary-line total"><span>Price per clean</span><span>$${total.toFixed(2)}</span></div>`;
+  html+=`<div class="summary-line total"><span>Price per clean (exc. GST)</span><span>$${total.toFixed(2)}</span></div>`;
   s.innerHTML=html;
 }
 
